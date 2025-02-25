@@ -490,7 +490,7 @@
 				window.parent.postMessage('closeAddModal', '*');
 			}
 
-			document.getElementsByClassName('close-btn').addEventListener('click', function (event) {
+			document.getElementById('close-btn').addEventListener('click', function (event) {
 					event.preventDefault();
 					console.log(
 						'The user has closed the Add Activity modal.'
