@@ -409,7 +409,7 @@ export function getDocsByPartnerName(partner_name) {
 			return getDocs(
 				query(
 					collection_reference,
-					where(rule[1], '>=', partner_name), 
+					where(rule[1], '>=', partner_name),
 					where(rule[1], '<=', partner_name + endName)
 				)
 			)
@@ -453,7 +453,7 @@ export function addEntry(inp_obj) {
 			addDoc(collection_reference, input)
 				.then((docRef) => {
 					alert("You may now reload the page for your addition to reflect on this page");
-					
+
 				})
 				.catch((error) => {
 					console.error('Error adding document: ', error);
@@ -513,8 +513,8 @@ export function validateData(collectionName, data) {
 		) {
 			errors.push(`${fieldLabel} is required.`);
 			continue;
-		} 
-		
+		}
+
 		// else {
 		// 	errors.push("Field is valid!");
 		// }
@@ -560,13 +560,13 @@ export function validateData(collectionName, data) {
 				errors.push(
 					`${fieldLabel} must be at least ${rule.minLength} characters long and in the form 09XX XXX XXXX.`
 				);
-				
+
 			} else {
 				errors.push(
 					`${fieldLabel} must be at least ${rule.minLength} characters long.`
 				);
 			}
-			
+
 			continue;
 		}
 
