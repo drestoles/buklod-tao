@@ -1,4 +1,4 @@
-import {} from './firestore.js';
+import { getPartnersArray } from './firestore.js';
 import {
 	getDocIdByPartnerName,
 	getDocByID,
@@ -24,10 +24,14 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		'&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
 
+
 var searchControl = L.esri.Geocoding.geosearch().addTo(map);
 
 var results = L.layerGroup().addTo(map);
 var popup = L.popup();
+var partnersArray = [];
+partnersArray = getPartnersArray();
+
 
 // function to store the html for info display on pin click
 function onPinClick(doc) {
@@ -157,33 +161,30 @@ function onPinClick(doc) {
 }
 
 // Loads art the start
-getDocs(colRef)
-	.then((querySnapshot) => {
-		querySnapshot.forEach((entry) => {
-			var doc = entry.data();
-			var marker = L.marker([0, 0]);
-			//console.log(doc);
-			if (doc.location_coordinates != null) {
-				marker = L.marker([
-					parseFloat(doc.location_coordinates._lat),
-					parseFloat(doc.location_coordinates._long),
-				]);
-			}
-			// shows partner info on pin click
-			var popupContent = onPinClick(doc);
-			marker.bindPopup(popupContent);
-			results.addLayer(marker);
-		});
-	})
-	.catch((error) => {
-		console.error('Error getting documents: ', error);
-	});
+
+partnersArray.forEach((partner) => {
+  var doc = partner;
+  var this_marker = partner.marker;
+  if (doc.location_coordinates != null) {
+    this_marker = L.marker([
+      parseFloat(doc.location_coordinates._lat),
+      parseFloat(doc.location_coordinates._long),
+    ]);
+  }
+  // shows partner info on pin click
+  var popupContent = onPinClick(doc);
+  this_marker.bindPopup(popupContent);
+  results.addLayer(this_marker);
+  Object.defineProperty(partner, "marker", {value:this_marker, configurable: true});
+});
 
 addListeners();
 
 function onMapClick(e) {
 	const lat = e.latlng.lat;
 	const lng = e.latlng.lng;
+  
+  
 
 	// This is the popup for when the user clicks on a spot on the map
 	var popupContent = `
@@ -218,6 +219,7 @@ function onMapClick(e) {
 		// Display the modal
 		modal.classList.remove('hidden');
 		modal.classList.add('flex');
+
 
  // Handle form submission
  document.getElementById('addHouseholdForm').addEventListener('submit', function (event) {
@@ -271,11 +273,9 @@ map.on('click', onMapClick);
 
 //// Event Listeners
 searchControl.on('results', function (data) {
-	console.log(data);
 	results.clearLayers();
 	for (var i = data.results.length - 1; i >= 0; i--) {
 		var marker = L.marker(data.results[i].latlng);
-		//console.log(marker);
 		results.addLayer(marker);
 	}
 });

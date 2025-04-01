@@ -1,0 +1,3 @@
+const household_data = {
+
+};
