@@ -1,4 +1,5 @@
 // FIRESTORE DATABASE
+
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.18.0/firebase-app.js';
 import {
 	getFirestore,
@@ -30,9 +31,6 @@ const db = getFirestore();
 setCollection('buklod-official');
 const colRef = getCollection();
 let partnersArray = [];
-
-
-
 
 export function getDocIdByPartnerName(partnerName) {
 	const endName = partnerName.replace(/\s/g, '\uf8ff');
@@ -68,93 +66,66 @@ export function getDocByID(docId) {
 		return docObj;
 	});
 }
+
 // get docs from firestore
-let lock = true;
 
-const loadData = async()=>{
-	const getRefs = async() => {
-		await getDocs(colRef)
-	.then((querySnapshot) => {
-			querySnapshot.forEach((doc) => {
-				if (
-					doc.data().name !== 'Test 2' ||
-					doc.data().name !== 'Test2'
-				) {
-					partnersArray.push(doc.data());
-				}
-				
-			});
-
-			// populate ul with partners
-			partnersArray.forEach((partner) => {
-				// Creating DOM elements
-				const containerDiv = document.createElement('div');
-				const img = document.createElement('svg');
-				const listItem = document.createElement('li');
-				const anchor = document.createElement('a');
-				const nameDiv = document.createElement('div');
-				const addressDiv = document.createElement('div');
-
-				// Set attributes
-				anchor.href = '#';
-				var marker = L.marker([0, 0]);
-
-				Object.defineProperty(partner, "marker", {value:marker, configurable: true});
-
-				anchor.addEventListener('click', () => {
-					partner.marker.fire('click');
-				});
-
-				// Adding classes and setting text content
-				nameDiv.classList.add('name');
-				addressDiv.classList.add('address');
-
-				nameDiv.textContent = partner.household_name;
-				addressDiv.textContent =
-					partner.household_address + ' ' + partner.household_phase;
-
-				listItem.classList.add('accordion');
-				anchor.classList.add('accordion', 'link');
-				containerDiv.classList.add('container-entry');
-
-				// Append elements to the DOM
-				anchor.appendChild(nameDiv);
-				anchor.appendChild(addressDiv);
-
-				listItem.appendChild(anchor);
-				containerDiv.appendChild(img);
-				containerDiv.appendChild(listItem);
-				locationList.appendChild(containerDiv);
-			});
-		})
-		.catch((error) => {
-			console.error('Error getting documents: ', error);
-		});
-
-	}
-	await getRefs();
-}
-
-const start_index = ()=> {
-	let index = document.createElement('script');
-	index.type = "module";
-	index.src = 'js/index.js';
-	document.body.appendChild(index);
-}
-
-async function asyncCall() {
-	await loadData();
-	start_index();
-};
-
-asyncCall();
-
-export function getPartnersArray(){
+export function getPartnersArray() {
 	return partnersArray;
 }
 
+getDocs(colRef)
+	.then((querySnapshot) => {
+		querySnapshot.forEach((doc) => {
+			if (
+				doc.data().name !== 'Test 2' ||
+				doc.data().name !== 'Test2'
+			) {
+				partnersArray.push(doc.data());
+			}
+		});
 
+		// populate ul with partners
+		partnersArray.forEach((partner) => {
+			// Creating DOM elements
+			const containerDiv = document.createElement('div');
+			const img = document.createElement('svg');
+			const listItem = document.createElement('li');
+			const anchor = document.createElement('a');
+			const nameDiv = document.createElement('div');
+			const addressDiv = document.createElement('div');
 
+			// Set attributes
+			anchor.href = '#';
+
+			anchor.addEventListener('click', () => {
+				showModal(partner);
+			});
+
+			// Adding classes and setting text content
+			nameDiv.classList.add('name');
+			addressDiv.classList.add('address');
+
+			nameDiv.textContent = partner.household_name;
+			addressDiv.textContent =
+				partner.household_address + ' ' + partner.household_phase;
+
+			listItem.classList.add('accordion');
+			anchor.classList.add('accordion', 'link');
+			containerDiv.classList.add('container-entry');
+
+			// Append elements to the DOM
+			anchor.appendChild(nameDiv);
+			anchor.appendChild(addressDiv);
+
+			listItem.appendChild(anchor);
+			containerDiv.appendChild(img);
+			containerDiv.appendChild(listItem);
+			locationList.appendChild(containerDiv);
+		});
+	})
+	.catch((error) => {
+		console.error('Error getting documents: ', error);
+	});
 
 function showModal(partner) {
 	const modal = document.getElementById('partnerModal');
