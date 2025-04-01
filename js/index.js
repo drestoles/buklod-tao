@@ -1,4 +1,4 @@
-import {} from './firestore.js';
+import { getPartnersArray } from './firestore.js';
 import {
 	getDocIdByPartnerName,
 	getDocByID,
@@ -28,6 +28,8 @@ var searchControl = L.esri.Geocoding.geosearch().addTo(map);
 
 var results = L.layerGroup().addTo(map);
 var popup = L.popup();
+
+var partnersArray = getPartnersArray();
 
 // function to store the html for info display on pin click
 function onPinClick(doc) {
@@ -155,29 +157,23 @@ function onPinClick(doc) {
   `;
 	return leaflet_html;
 }
-
 // Loads art the start
-getDocs(colRef)
-	.then((querySnapshot) => {
-		querySnapshot.forEach((entry) => {
-			var doc = entry.data();
-			var marker = L.marker([0, 0]);
-			//console.log(doc);
-			if (doc.location_coordinates != null) {
-				marker = L.marker([
-					parseFloat(doc.location_coordinates._lat),
-					parseFloat(doc.location_coordinates._long),
-				]);
-			}
-			// shows partner info on pin click
-			var popupContent = onPinClick(doc);
-			marker.bindPopup(popupContent);
-			results.addLayer(marker);
-		});
-	})
-	.catch((error) => {
-		console.error('Error getting documents: ', error);
-	});
+partnersArray.forEach((partner) => {
+    var doc = partner;
+    var this_marker = partner.marker;
+    //console.log(doc);
+    if (doc.location_coordinates != null) {
+      this_marker = L.marker([
+        parseFloat(doc.location_coordinates._lat),
+        parseFloat(doc.location_coordinates._long),
+      ]);
+    }
+    // shows partner info on pin click
+    var popupContent = onPinClick(doc);
+    this_marker.bindPopup(popupContent);
+    results.addLayer(this_marker);
+    Object.defineProperty(partner, "marker", {value:this_marker, configurable: true});
+  });
 
 addListeners();
 
