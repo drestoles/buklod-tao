@@ -8,7 +8,7 @@
     <link href='https://fonts.googleapis.com/css?family=Hind' rel='stylesheet'>
 
     <script type="module">
-        import { editEntry, getDocIdByPartnerName, getDocByID } from "./js/firestore_UNIV.js";
+        import { editEntry, BUKLOD_RULES_TEST, getDocIdByPartnerName, getDocByID } from "./js/firestore_UNIV.js";
         function populateFormFields(partnerData) {
             document.getElementById("partner").value = partnerData.name;
             document.getElementById("partner_contact-person").value = partnerData["`partner-contact`"];
@@ -44,6 +44,37 @@
         document.getElementById("submit_form").addEventListener("click", handleFormSubmit);
 
         function handleFormSubmit() {
+            var collatedInput = {}; 
+            for(let i = 0; i < BUKLOD_RULES_TEST[2].length; i++){
+                //BUKLOD_RULES_TEST[2] are just the field names of each document
+                // console.log(BUKLOD_RULES_TEST[2][i]);
+                // let q = document.getElementById(BUKLOD_RULES_TEST[2][i]).value;
+                // collatedInput[BUKLOD_RULES_TEST[2][i]] = q;
+
+                let fieldName = BUKLOD_RULES_TEST[2][i];
+                let inputValue = document.getElementById(fieldName).value;
+
+                if (fieldName == 'number_residents' || fieldName == 'location_coordinates' || fieldName == 'number_minors' || fieldName == 'number_pregnant' || fieldName == 'number_pwd' || fieldName == 'number_sick') {
+                    if (fieldName == 'location_coordinates') {
+                        //collatedInput[fieldName] = getCoordinates();
+                        collatedInput[fieldName] = inputValue;
+                    } else {
+                        collatedInput[fieldName] = Number(inputValue);
+                    }
+                } 
+                if(fieldName.includes('risk')){
+                    let riskType = fieldName.split('_')
+                    collatedInput[fieldName] = `${document.getElementById(riskType[0]).value.toUpperCase()} RISK: ${document.getElementById(fieldName).value}`;
+                }
+                else {
+                    collatedInput[fieldName] = inputValue;
+                }
+
+                // this is where data validation will happen
+                // add the if-else statements of edge cases here
+            }
+
+
             const partnerName = document.getElementById("partner").value;
             getDocIdByPartnerName(partnerName)
                 .then((docId) => {
@@ -65,6 +96,7 @@
                         alert("No matching document found for the partner name: " + partnerName);
                     }
                 });
+
 
         }
     </script>
