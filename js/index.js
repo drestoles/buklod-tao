@@ -205,7 +205,7 @@ evacCenters.forEach(center => {
   ).addTo(map);
 
   marker.bindPopup(`
-    <div class = "evac-marker-header">EVACUATION CENTER</div>
+    <div class = "evac-marker-header">${center.type}</div>
     <div style = "text-align:center;">
       <b>${center.name}</b>
       <br>Location: ${center.latitude}, ${center.longitude}

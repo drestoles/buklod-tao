@@ -627,4 +627,6 @@ button.collapsible {
   font-size: 18px;
   font-weight: bold;
   color: rgb(11, 103, 65);
+  text-align: center;
+  margin-bottom: 7px;
 }
