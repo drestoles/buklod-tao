@@ -19,6 +19,37 @@ var colRef = getCollection();
 
 map.panTo(new L.LatLng(14.673, 121.11215));
 
+const evacuationCenters = [
+  {
+    "name": "Ynares Basketball Court",
+    "latitude": 14.676018,
+    "longitude": 121.109596,
+  },
+  {
+    "name": "SM San Mateo",
+    "latitude": 14.679451,
+    "longitude": 121.114464,
+  },
+  {
+    "name": "Buklod Tao",
+    "latitude": 14.671060,
+    "longitude": 121.126207,
+  }
+];
+
+evacuationCenters.forEach(center => {
+  const marker = L.marker([center.latitude, center.longitude], {
+    icon: L.divIcon({
+      className: 'evac-marker'
+    })
+  }).addTo(map);
+
+  marker.bindPopup(`
+    <div class = "evac-marker-header">EVACUATION CENTER</div>
+    <b>${center.name}</b>
+    <br>Location: ${center.latitude}, ${center.longitude}`);
+});
+
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution:
     '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
