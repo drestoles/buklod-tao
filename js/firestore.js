@@ -73,7 +73,9 @@ export function getPartnersArray() {
 	return partnersArray;
 }
 
-getDocs(colRef)
+const loadData = async() => {
+	const getRefs = async() => {
+		await getDocs(colRef)
 	.then((querySnapshot) => {
 		querySnapshot.forEach((doc) => {
 			if (
@@ -96,9 +98,13 @@ getDocs(colRef)
 
 			// Set attributes
 			anchor.href = '#';
+			let marker = L.marker([0, 0]);
+
+			Object.defineProperty(partner, "marker", {value:marker, configurable: true});
+
 
 			anchor.addEventListener('click', () => {
-				showModal(partner);
+				partner.marker.fire('click');
 			});
 
 			// Adding classes and setting text content
@@ -126,6 +132,26 @@ getDocs(colRef)
 	.catch((error) => {
 		console.error('Error getting documents: ', error);
 	});
+	}
+
+	await getRefs();
+}
+
+
+const loadIndex = async() => {
+	let index = document.createElement("script");
+	index.type = "module";
+	index.src = "js/index.js";
+	document.body.appendChild(index);
+}
+
+const loadFile = async() => {
+	await loadData();
+	loadIndex();
+}
+
+loadFile();
+
 
 function showModal(partner) {
 	const modal = document.getElementById('partnerModal');
