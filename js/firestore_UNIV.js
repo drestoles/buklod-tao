@@ -45,7 +45,9 @@ const lng = getUrlParameter('lng');
 //     return PARTNER_COORDINATES;
 // }
 
-export function getCoordinates() {
+export function getCoordinates(coordinates) {
+	var arr = coordinates.split('+');
+	var lat = arr[0], lng = arr[1];
 	// Ensure lat and lng are numbers
 	const latNum = parseFloat(lat);
 	const lngNum = parseFloat(lng);
@@ -216,7 +218,7 @@ const VALIDATION_RULES = {
 			enum: ['HOA', 'N/A'],
 		},
 		landslide_risk: { type: 'string', required: true },
-		location_coordinates: { type: 'number', required: true },
+		// location_coordinates: { type: 'string', required: true },
 		location_link: { type: 'string', required: true },
 		nearest_evac: { type: 'string', required: true, maxLength: 255 },
 		number_minors: { type: 'number' },
@@ -409,7 +411,7 @@ export function getDocsByPartnerName(partner_name) {
 			return getDocs(
 				query(
 					collection_reference,
-					where(rule[1], '>=', partner_name), 
+					where(rule[1], '>=', partner_name),
 					where(rule[1], '<=', partner_name + endName)
 				)
 			)
@@ -453,7 +455,7 @@ export function addEntry(inp_obj) {
 			addDoc(collection_reference, input)
 				.then((docRef) => {
 					alert("You may now reload the page for your addition to reflect on this page");
-					
+
 				})
 				.catch((error) => {
 					console.error('Error adding document: ', error);
@@ -513,8 +515,8 @@ export function validateData(collectionName, data) {
 		) {
 			errors.push(`${fieldLabel} is required.`);
 			continue;
-		} 
-		
+		}
+
 		// else {
 		// 	errors.push("Field is valid!");
 		// }
@@ -560,13 +562,13 @@ export function validateData(collectionName, data) {
 				errors.push(
 					`${fieldLabel} must be at least ${rule.minLength} characters long and in the form 09XX XXX XXXX.`
 				);
-				
+
 			} else {
 				errors.push(
 					`${fieldLabel} must be at least ${rule.minLength} characters long.`
 				);
 			}
-			
+
 			continue;
 		}
 
