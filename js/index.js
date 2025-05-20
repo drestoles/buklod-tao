@@ -16,9 +16,13 @@ import {
 } from 'https://www.gstatic.com/firebasejs/9.18.0/firebase-firestore.js';
 import evacCenters from '/hardcode/evac-centers.json' with {type: 'json'};
 
+
 var colRef = getCollection();
 
+
 map.panTo(new L.LatLng(14.673, 121.11215));
+
+
 
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -26,12 +30,16 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
 
+
 var searchControl = L.esri.Geocoding.geosearch().addTo(map);
+
 
 var results = L.layerGroup().addTo(map);
 var popup = L.popup();
 
+
 var partnersArray = getPartnersArray();
+
 
 // function to store the html for info display on pin click
 function onPinClick(doc) {
@@ -57,6 +65,7 @@ function onPinClick(doc) {
   var storm1 = storm_split[0];
   var storm2 = storm_split[1];
 
+
   let leaflet_html = `
   <div class="leafletPopupContainer" id="leafletModal">
     <div class="leafletHeader">
@@ -77,9 +86,12 @@ function onPinClick(doc) {
         <p class="leafletDetails">${doc.residency_status}</p>
         <p class="leafletDetails">${doc.is_hoa_noa}</p>
       </div>
-      <div style="line-height: 3px; margin-bottom: 2px;">
+      <div style="line-height: 12px; margin-bottom: 2px;">
         <label class="leafletLabel">Nearest Evacuation Area</label>
-        <p class="leafletDetails">${doc.nearest_evac}</p>
+        <p class="leafletDetails">${
+          typeof doc.nearest_evac === 'string'
+          ? doc.nearest_evac.split(',').map(e => e.trim()).join('<br>')
+          : doc.nearest_evac}</p>
       </div>
     <div>
       <div class="leafletSubHeader">
@@ -168,6 +180,7 @@ getDocs(colRef)
       var doc = entry.data();
       var marker = L.marker([0, 0]);
 
+
       if (doc.location_coordinates != null) {
         marker = L.marker([
           parseFloat(doc.location_coordinates._lat),
@@ -195,6 +208,7 @@ getDocs(colRef)
     console.error('Error getting documents: ', error);
   });
 
+
 evacCenters.forEach(center => {
   const marker = L.marker(
     [center.latitude, center.longitude],
@@ -204,6 +218,7 @@ evacCenters.forEach(center => {
       popupAnchor: [0.5, -15]
     })}
   ).addTo(map);
+
 
   marker.bindPopup(`
     <div class = "evac-marker-header">${center.type}</div>
@@ -229,11 +244,14 @@ partnersArray.forEach((partner) => {
     Object.defineProperty(partner, "marker", {value:this_marker, configurable: true});
   });
 
+
 addListeners();
+
 
 function onMapClick(e) {
   const lat = e.latlng.lat;
   const lng = e.latlng.lng;
+
 
   // This is the popup for when the user clicks on a spot on the map
   var popupContent = `
@@ -246,14 +264,18 @@ function onMapClick(e) {
     </div>
     <button id="mainButton" class="addButton p-5" data-lat="${lat}" data-lng="${lng}">Add Household</button>`;
 
+
   popup.setLatLng(e.latlng).setContent(popupContent).openOn(map);
+
 
   var addButton = document.querySelector('.addButton');
   addButton.addEventListener('click', function () {
     const lat = this.getAttribute('data-lat');
     const lng = this.getAttribute('data-lng');
 
+
     var modal = document.getElementById('addModal');
+
 
     // TODO: Integrate this functionality into the modal instead
     // var partnerName = this.getAttribute("data-loc");
@@ -264,18 +286,22 @@ function onMapClick(e) {
     //   "_blank"
     // );
 
+
     // Display the modal
     modal.classList.remove('hidden');
     modal.classList.add('flex');
 
+
     // Set the coordinates based on the pin drop
     modal.getElementsByTagName('iframe')[0].contentWindow.document.getElementById('location_coordinates').value = lat + '+' + lng;
+
 
  // Handle form submission
   var addHouseholdFrom = document.getElementById('addHouseholdForm')
   if (addHouseholdFrom) {
     addHouseholdFrom.addEventListener('submit', function (event) {
       event.preventDefault();
+
 
       const householdData = {
         household_name: document.getElementById('household_name').value,
@@ -298,6 +324,7 @@ function onMapClick(e) {
         location_coordinates: new firebase.firestore.GeoPoint(parseFloat(lat), parseFloat(lng))
       };
 
+
       addDoc(colRef, householdData)
         .then(() => {
           alert('Household added successfully!');
@@ -312,6 +339,8 @@ function onMapClick(e) {
   }
 
 
+
+
     // Close the modal when the user clicks anywhere outside of it
     window.onclick = function (event) {
       if (event.target == modal) {
@@ -322,7 +351,9 @@ function onMapClick(e) {
   });
 }
 
+
 map.on('click', onMapClick);
+
 
 //// Event Listeners
 searchControl.on('results', function (data) {
@@ -335,16 +366,21 @@ searchControl.on('results', function (data) {
   }
 });
 
+
 //script for add household modal
+
 
 // modal
 var formModal = document.getElementById('addModal');
 
+
 // open modal
 var openForm = document.getElementById('mainButton');
 
+
 // Get the <span> element that closes the modal
 var closeForm = document.getElementsByClassName('closeForm')[0];
+
 
 // When the user clicks the button, open the modal
 if(openForm) {
@@ -352,16 +388,19 @@ if(openForm) {
     formModal.style.display = "block";
   }
 
+
   openForm.addEventListener('click', function () {
     formModal.style.display = 'block';
   });
 }
+
 
 if(closeForm) {
   closeForm.addEventListener('click', function () {
     formModal.style.display = 'none';
   });
 }
+
 
 // Closing the modal if the user clicks outside of it
 window.onclick = function (event) {
@@ -373,11 +412,13 @@ window.onclick = function (event) {
   }
 };
 
+
 function addMainButtonText() {
   var mainButtonText = document.getElementById('mainButtonText');
   if(mainButtonText) {
     mainButtonText.innerHTML = 'Add a household';
   }
 }
+
 
 addMainButtonText();
