@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"> <!--reference google fonts for 'Montserrat'-->
   <link href="https://fonts.googleapis.com/css?family=Hind" rel="stylesheet"> <!--reference google fonts for 'Hind'-->
   <link href='https://fonts.googleapis.com/css?family=Cormorant Garamond' rel='stylesheet'> <!--reference google fonts for 'Coromant Garamond'-->
-  
+ 
   <title>Login</title>
 </head>
 <body>
@@ -22,15 +22,34 @@
       <p id="error"></p> <!--error message-->
     </form>
   </div>
-    <script type="module">
-        import { signIn } from "./js/auth.js";
-        // Add event listener to the button to call signIn function
-        document.getElementById("loginButton").addEventListener("click", function() {
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
-        signIn(email, password);
-        });
-    </script>
-</body>
+  <script type="module">
+    import { signIn } from "./js/auth.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.18.0/firebase-app.js";
 
+
+    const response = await fetch('./secrets.json');
+    const secrets = await response.json();
+    const app = initializeApp(secrets.firebaseConfig);
+    const auth = getAuth(app);
+
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("Already signed in:", user.email);
+        window.location.replace("index.html");
+      } else {
+        // Show the form now that we know user is NOT logged in
+        document.getElementById("formContainer");
+      }
+    });
+
+
+    document.getElementById("loginButton").addEventListener("click", function () {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      signIn(email, password);
+    });
+  </script>
+  </body>
 </html>

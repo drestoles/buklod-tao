@@ -3,7 +3,9 @@ import {
     getDocMap,
 } from '/firestore_UNIV_v2_mirror.js';
 
+
 export var map = L.map('map').setView([14.5995, 120.9842], 10);
+
 
 export function panLocation(coordinates, map){ // just a geopoint object
     map.panTo(
@@ -13,6 +15,7 @@ export function panLocation(coordinates, map){ // just a geopoint object
         )
     );
 }
+
 
 export function searchLocation(all_doc_data, search_key, desired_value, location_key, map){ // take the geopoint out of a query
     // assume the coordinates can be narrowed down to a single key
@@ -27,14 +30,17 @@ export function searchLocation(all_doc_data, search_key, desired_value, location
         }
         return true
 
+
     });
 }
+
 
 // Utility Function for Front-end (remove underscores from a string)
 export function removeUnderscoresFromField(field) {
     const words = field.replace('_', ` `);
     return words;
 }
+
 
 // Utility function for Front-end (Capitalize Like This)
 // USE AFTER removeUnderscoresFromField
@@ -46,6 +52,7 @@ export function capitalizeFirstLetters(field) {
     return words.join(' ');
 }
 
+
 // Utility function for Front-end
 export function readyField(field) {
     field = removeUnderscoresFromField(field);
@@ -53,16 +60,18 @@ export function readyField(field) {
     return field;
 }
 
+
 // Listeners
 export function addListeners(all_doc_data, search_key, location_key) {
-	var locationList = document.getElementById(`locationList`);
-	locationList.addEventListener('click', (event) => {
+    var locationList = document.getElementById(`locationList`);
+    locationList.addEventListener('click', (event) => {
         let name = event.target.textContent;
-		searchLocation(all_doc_data, search_key, name, location_key, map);
-		console.log('Calling searchLocation()');
-	});
-	console.log('added');
+        searchLocation(all_doc_data, search_key, name, location_key, map);
+        console.log('Calling searchLocation()');
+    });
+    console.log('added');
 }
+
 
 export function clearMarkers() {
     console.log('removing markers');
@@ -73,14 +82,16 @@ export function clearMarkers() {
     });
 }
 
+
 export function clearLocationList() {
     console.log('remove location list');
     var locationList = document.getElementById(`locationList`);
     locationList.innerHTML = '';
 }
 
+
 // code for the switching of maps
-export const JS_CS_ENGINE = 
+export const JS_CS_ENGINE =
     [
         ["buklod-official",
             [
@@ -102,6 +113,7 @@ export const JS_CS_ENGINE =
         ],
     ];
 
+
 // creates the JS CSS Files
 export function createJsCssFiles(file_path){
     // Essentially makes a script object with a src of the file provided by the Rules Engine
@@ -117,8 +129,10 @@ export function createJsCssFiles(file_path){
         fileref.setAttribute("href", file_path + "?");
     }
 
+
     return fileref;
 }
+
 
 // Loads the JS CSS Files
 export function loadJsCssFiles(file_path){
@@ -132,6 +146,7 @@ export function loadJsCssFiles(file_path){
             }
         }
     }
+
 
     console.log("appended js css files");
 }

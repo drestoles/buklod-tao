@@ -507,5 +507,48 @@
 					closeModal();
 				});
         </script>
+        <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getFirestore, collection } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+  import { firebaseConfig } from './assets/firebaseConfig.js';
+  import { addEntry, BUKLOD_RULES_TEST } from './assets/database.js';
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const submitBtn = document.getElementById("submit_form");
+
+    if (!submitBtn) {
+      console.error("Submit button not found");
+      return;
+    }
+
+    submitBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      try {
+        const formData = {};
+        for (const field of BUKLOD_RULES_TEST[2]) {
+          const element = document.getElementById(field);
+          if (element) {
+            const value = element.value;
+            formData[field] = isNaN(value) || value.trim() === "" ? value : Number(value);
+          }
+        }
+
+        formData["risk"] = formData["risk"] || "";
+        formData["risk_num"] = formData["risk_num"] || 0;
+
+        await addEntry(formData);
+        alert("Household successfully added!");
+        window.location.href = "index.html";
+      } catch (err) {
+        console.error("Error adding entry:", err);
+        alert("Error adding entry: " + err.message);
+      }
+    });});
+</script>
+
     </body>  
 </html>
